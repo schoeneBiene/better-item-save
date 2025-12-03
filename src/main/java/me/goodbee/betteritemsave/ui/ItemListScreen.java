@@ -104,7 +104,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         try {
             addFiles(itemSaver.basePath, scrollChild);
 
-            ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(25), scrollChild);
+            ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(50), scrollChild);
             container.child(scrollContainer);
         } catch (IOException e) {
             rootComponent.child(Components.label(Component.literal("An error occured! Check the logs for more information.")));
