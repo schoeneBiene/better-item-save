@@ -91,7 +91,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
         container.child(buttonComponent);
 
-        FlowLayout scrollChild = Containers.verticalFlow(Sizing.content(), Sizing.content());
+        FlowLayout scrollChild = Containers.verticalFlow(Sizing.fill(), Sizing.content());
         try {
             addFiles(itemSaver.basePath, scrollChild);
 
