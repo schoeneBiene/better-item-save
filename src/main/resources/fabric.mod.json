@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "better-item-save",
+	"version": "${version}",
+	"name": "Better Item Save",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/better-item-save/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"me.goodbee.betteritemsave.BetterItemSave"
+		]
+	},
+	"mixins": [
+		"better-item-save.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.1",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*",
+		"owo": "0.12.24+1.21.9"
+	},
+	"suggests": {}
+}
