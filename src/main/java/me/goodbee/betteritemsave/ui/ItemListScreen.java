@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,8 +110,22 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
     protected void addFiles(Path currentPath, FlowLayout container) throws IOException {
         DirectoryStream<Path> stream = Files.newDirectoryStream(currentPath);
+        ArrayList<Path> sorted = new ArrayList<>();
 
         for(Path item : stream) {
+            sorted.add(item);
+        }
+
+        sorted.sort((a, b) -> {
+            boolean aDir = Files.isDirectory(a);
+            boolean bDir = Files.isDirectory(b);
+
+            if (aDir && !bDir) return -1;
+            if (!aDir && bDir) return 1;
+            return a.getFileName().toString().compareToIgnoreCase(b.getFileName().toString());
+        });
+
+        for(Path item : sorted) {
             if(Files.isDirectory(item)) {
                 CollapsibleContainer collapsibleContainer = Containers.collapsible(Sizing.content(), Sizing.content(), Component.literal(item.getFileName().toString()), false);
 
