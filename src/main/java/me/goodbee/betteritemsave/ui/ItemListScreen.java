@@ -53,7 +53,10 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 .surface(Surface.DARK_PANEL)
                 .horizontalAlignment(HorizontalAlignment.LEFT);
 
-        ButtonComponent buttonComponent = Components.button(Component.literal("Give"), button -> {
+        FlowLayout buttonRow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
+        buttonRow.margins(Insets.bottom(5));
+
+        ButtonComponent giveButton = Components.button(Component.literal("Give"), button -> {
             for(Map.Entry<Path, CheckboxComponent> itr : files.entrySet()) {
                 BetterItemSave.LOGGER.debug(itr.getKey().toString());
                 BetterItemSave.LOGGER.debug(itr.getValue().toString());
@@ -87,10 +90,15 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 }
             }
         });
+        giveButton.margins(Insets.right(5));
+        buttonRow.child(giveButton);
 
-        buttonComponent.margins(Insets.bottom(10));
+        ButtonComponent refreshButton = Components.button(Component.literal("Refresh"), button -> {
+            Minecraft.getInstance().setScreen(new ItemListScreen(itemSaver));
+        });
+        buttonRow.child(refreshButton);
 
-        container.child(buttonComponent);
+        container.child(buttonRow);
 
         FlowLayout scrollChild = Containers.verticalFlow(Sizing.fill(), Sizing.content());
         try {
