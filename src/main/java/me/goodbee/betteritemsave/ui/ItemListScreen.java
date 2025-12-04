@@ -29,6 +29,8 @@ import java.util.Map;
 public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
     private final ItemSaver itemSaver;
     private final Map<Path, CheckboxComponent> files = new HashMap<>();
+    private CheckboxComponent selectedCheckbox;
+    private Path selectedPath;
 
     public ItemListScreen(ItemSaver itemSaver) {
         this.itemSaver = itemSaver;
@@ -59,36 +61,36 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         buttonRow.margins(Insets.bottom(5));
 
         giveButton = Components.button(Component.literal("Give"), button -> {
-            for(Map.Entry<Path, CheckboxComponent> itr : files.entrySet()) {
-                BetterItemSave.LOGGER.debug(itr.getKey().toString());
-                BetterItemSave.LOGGER.debug(itr.getValue().toString());
-                if(itr.getValue().selected()) {
-                    ItemStack item = itemSaver.readItem(itr.getKey());
+            if((selectedCheckbox == null) || (selectedPath == null)) {
+                return;
+            }
 
-                    if(item == null) {
-                        Minecraft.getInstance().player.displayClientMessage(Component.literal("An error occured while giving you an item, check the logs for more information."), false);
-                        continue;
+            if(selectedCheckbox.selected()) {
+                ItemStack item = itemSaver.readItem(selectedPath);
+
+                if(item == null) {
+                    Minecraft.getInstance().player.displayClientMessage(Component.literal("An error occured while giving you the item, check the logs for more information."), false);
+                    return;
+                }
+
+                LocalPlayer player = Minecraft.getInstance().player;
+
+                boolean found = false;
+
+                for(int i = 0; i <= 8; i++) {
+                    ItemStack itemStack = player.getInventory().getItem(i);
+
+                    if(itemStack.isEmpty()) {
+                        Minecraft.getInstance().getConnection().send(new ServerboundSetCreativeModeSlotPacket(i + 36, item));
+                        player.inventoryMenu.getSlot(i + 36).set(item);
+
+                        found = true;
+                        break;
                     }
+                }
 
-                    LocalPlayer player = Minecraft.getInstance().player;
-
-                    boolean found = false;
-
-                    for(int i = 0; i <= 8; i++) {
-                        ItemStack itemStack = player.getInventory().getItem(i);
-
-                        if(itemStack.isEmpty()) {
-                            Minecraft.getInstance().getConnection().send(new ServerboundSetCreativeModeSlotPacket(i + 36, item));
-                            player.inventoryMenu.getSlot(i + 36).set(item);
-
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if(!found) {
-                        player.displayClientMessage(Component.literal("An item wasn't given, as your hotbar is full!"), false);
-                    }
+                if(!found) {
+                    player.displayClientMessage(Component.literal("The item wasn't given, as your hotbar is full!"), false);
                 }
             }
         });
@@ -156,12 +158,17 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                        if(giveButton != null) {
                            giveButton.active(false);
                        }
+
+                       selectedCheckbox = null;
+                       selectedPath = null;
                    } else {
-                       for (Map.Entry<Path, CheckboxComponent> itr : files.entrySet()) {
-                           if (!itr.getKey().equals(item)) {
-                               itr.getValue().checked(false);
-                           }
+                       if(selectedCheckbox != null) {
+                           selectedCheckbox.checked(false);
                        }
+
+                       selectedCheckbox = checkbox;
+                       selectedPath = item;
+
                        giveButton.active(true);
                    }
                 });
