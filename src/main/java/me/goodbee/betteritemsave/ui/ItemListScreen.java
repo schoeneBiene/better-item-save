@@ -199,12 +199,17 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                     ItemStack itemStack = new ItemStack(Items.BREWER_POTTERY_SHERD, 1);
                     itemStack.set(DataComponents.CUSTOM_NAME, Component.translatable("text.menu.better-item-save.loading"));
 
+                    final boolean[] hasDone = {false};
+
                     ItemComponent itemComponent = Components.item(itemStack);
                     itemComponent.setTooltipFromStack(true);
                     itemComponent.showOverlay(true);
                     itemComponent.mouseEnter().subscribe(() -> {
-                        ItemStack realItemStack = itemSaver.readItem(item);
-                        itemComponent.stack(realItemStack);
+                        if(!hasDone[0]) {
+                            ItemStack realItemStack = itemSaver.readItem(item);
+                            itemComponent.stack(realItemStack);
+                            hasDone[0] = true;
+                        }
                     });
                     horizontalFlow.child(itemComponent);
                 }
