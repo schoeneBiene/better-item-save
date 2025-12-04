@@ -1,0 +1,11 @@
+{
+  "text.config.better-item-save.option.horizontalMenuSize": "Horizontal Menu Size",
+  "text.config.better-item-save.option.horizontalMenuSize.tooltip": "Sets the horizontal menu size in %",
+  "text.config.better-item-save.option.verticalMenuSize": "Vertical Menu Size",
+  "text.config.better-item-save.option.verticalMenuSize.tooltip": "Sets the vertical menu size in %",
+  "text.config.better-item-save.option.showItemPreview": "Show Item Preview",
+  "text.config.better-item-save.option.showItemPreview.tooltip": "Whether or not to show an item preview, this can cause lag when opening the menu if you have many or big items saved.",
+  "text.config.better-item-save.option.showItemPreview.value.enabled": "Enabled",
+  "text.config.better-item-save.option.showItemPreview.value.disabled": "Disabled",
+  "text.config.better-item-save.option.showItemPreview.value.on_hover": "On Hover"
+}

@@ -14,9 +14,11 @@ import me.goodbee.betteritemsave.BetterItemSave;
 import me.goodbee.betteritemsave.ItemSaver;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -49,7 +51,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 .horizontalAlignment(HorizontalAlignment.CENTER)
                 .verticalAlignment(VerticalAlignment.CENTER);
 
-        FlowLayout container = Containers.verticalFlow(Sizing.fill(50), Sizing.content());
+        FlowLayout container = Containers.verticalFlow(Sizing.fill(BetterItemSave.CONFIG.horizontalMenuSize()), Sizing.content());
 
         container
                 .padding(Insets.of(10))
@@ -64,8 +66,12 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 ItemStack item = itemStackMap.get(itr.getKey());
 
                 if (item == null) {
-                    Minecraft.getInstance().player.displayClientMessage(Component.literal("An error occured while giving you the item, check the logs for more information."), false);
-                    return;
+                    item = itemSaver.readItem(itr.getKey());
+
+                    if(item == null) {
+                        Minecraft.getInstance().player.displayClientMessage(Component.literal("An error occured while giving you the item, check the logs for more information."), false);
+                        return;
+                    }
                 }
 
                 LocalPlayer player = Minecraft.getInstance().player;
@@ -110,7 +116,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         try {
             addFiles(itemSaver.basePath, scrollChild);
 
-            ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(50), scrollChild);
+            ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(BetterItemSave.CONFIG.verticalMenuSize()), scrollChild);
             container.child(scrollContainer);
         } catch (IOException e) {
             rootComponent.child(Components.label(Component.literal("An error occured! Check the logs for more information.")));
@@ -180,15 +186,28 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 FlowLayout horizontalFlow = Containers.horizontalFlow(Sizing.content(), Sizing.content());
                 horizontalFlow.child(checkbox);
 
-                // todo: save this and use it when giving instead of reading it again
-                ItemStack itemStack = itemSaver.readItem(item);
+                if(BetterItemSave.CONFIG.showItemPreview() == ConfigModel.ShowItemPreviewOptions.ENABLED) {
+                    ItemStack itemStack = itemSaver.readItem(item);
 
-                itemStackMap.put(item, itemStack);
+                    itemStackMap.put(item, itemStack);
 
-                ItemComponent itemComponent = Components.item(itemStack);
-                itemComponent.setTooltipFromStack(true);
-                itemComponent.showOverlay(true);
-                horizontalFlow.child(itemComponent);
+                    ItemComponent itemComponent = Components.item(itemStack);
+                    itemComponent.setTooltipFromStack(true);
+                    itemComponent.showOverlay(true);
+                    horizontalFlow.child(itemComponent);
+                } else if(BetterItemSave.CONFIG.showItemPreview() == ConfigModel.ShowItemPreviewOptions.ON_HOVER) {
+                    ItemStack itemStack = new ItemStack(Items.BREWER_POTTERY_SHERD, 1);
+                    itemStack.set(DataComponents.CUSTOM_NAME, Component.literal("Loading..."));
+
+                    ItemComponent itemComponent = Components.item(itemStack);
+                    itemComponent.setTooltipFromStack(true);
+                    itemComponent.showOverlay(true);
+                    itemComponent.mouseEnter().subscribe(() -> {
+                        ItemStack realItemStack = itemSaver.readItem(item);
+                        itemComponent.stack(realItemStack);
+                    });
+                    horizontalFlow.child(itemComponent);
+                }
 
                 container.child(horizontalFlow);
             }

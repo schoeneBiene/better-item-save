@@ -41,6 +41,7 @@ dependencies {
 
 	// owo ui
 	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+	annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
 }
 
 processResources {

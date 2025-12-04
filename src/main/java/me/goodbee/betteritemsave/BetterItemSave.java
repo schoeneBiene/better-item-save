@@ -1,6 +1,7 @@
 package me.goodbee.betteritemsave;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import me.goodbee.betteritemsave.ui.Config;
 import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -22,6 +23,7 @@ public class BetterItemSave implements ClientModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Config CONFIG = Config.createAndLoad();
 
 	public static ItemSaver itemSaver;
 	@Override
