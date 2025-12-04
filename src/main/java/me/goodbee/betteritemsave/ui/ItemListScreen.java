@@ -24,13 +24,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
     private final ItemSaver itemSaver;
-    private final Map<Path, CheckboxComponent> files = new HashMap<>();
-    private CheckboxComponent selectedCheckbox;
-    private Path selectedPath;
+    private final Map<Path, CheckboxComponent> selectedItems = new HashMap<>();
+    private boolean multiselectEnabled = false;
 
     public ItemListScreen(ItemSaver itemSaver) {
         this.itemSaver = itemSaver;
@@ -61,14 +61,10 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         buttonRow.margins(Insets.bottom(5));
 
         giveButton = Components.button(Component.literal("Give"), button -> {
-            if((selectedCheckbox == null) || (selectedPath == null)) {
-                return;
-            }
+            for(Map.Entry<Path, CheckboxComponent> itr : selectedItems.entrySet()) {
+                ItemStack item = itemSaver.readItem(itr.getKey());
 
-            if(selectedCheckbox.selected()) {
-                ItemStack item = itemSaver.readItem(selectedPath);
-
-                if(item == null) {
+                if (item == null) {
                     Minecraft.getInstance().player.displayClientMessage(Component.literal("An error occured while giving you the item, check the logs for more information."), false);
                     return;
                 }
@@ -77,10 +73,10 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
                 boolean found = false;
 
-                for(int i = 0; i <= 8; i++) {
+                for (int i = 0; i <= 8; i++) {
                     ItemStack itemStack = player.getInventory().getItem(i);
 
-                    if(itemStack.isEmpty()) {
+                    if (itemStack.isEmpty()) {
                         Minecraft.getInstance().getConnection().send(new ServerboundSetCreativeModeSlotPacket(i + 36, item));
                         player.inventoryMenu.getSlot(i + 36).set(item);
 
@@ -101,7 +97,13 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         ButtonComponent refreshButton = Components.button(Component.literal("Refresh"), button -> {
             Minecraft.getInstance().setScreen(new ItemListScreen(itemSaver));
         });
+        refreshButton.margins(Insets.right(5));
         buttonRow.child(refreshButton);
+
+        CheckboxComponent multiselectCheckbox = Components.checkbox(Component.literal("Multiselect"));
+        multiselectCheckbox.onChanged(b -> multiselectEnabled = b);
+        multiselectCheckbox.margins(Insets.top(1));
+        buttonRow.child(multiselectCheckbox);
 
         container.child(buttonRow);
 
@@ -155,26 +157,27 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
                 checkbox.onChanged(b -> {
                    if(!b) {
-                       if(giveButton != null) {
+                       selectedItems.remove(item);
+
+                       if(selectedItems.isEmpty()) {
                            giveButton.active(false);
                        }
-
-                       selectedCheckbox = null;
-                       selectedPath = null;
                    } else {
-                       if(selectedCheckbox != null) {
-                           selectedCheckbox.checked(false);
+                       if(!multiselectEnabled) {
+                           Map<Path, CheckboxComponent> toRemove = new HashMap<>(selectedItems);
+
+                           for(Map.Entry<Path, CheckboxComponent> itr : toRemove.entrySet()) {
+                               selectedItems.remove(itr.getKey()).checked(false);
+                           }
                        }
 
-                       selectedCheckbox = checkbox;
-                       selectedPath = item;
+                       selectedItems.put(item, checkbox);
 
                        giveButton.active(true);
                    }
                 });
 
                 container.child(checkbox);
-                files.put(item, checkbox);
             }
         }
     }
