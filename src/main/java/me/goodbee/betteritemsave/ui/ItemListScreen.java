@@ -147,6 +147,17 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 }
 
                 CheckboxComponent checkbox = Components.checkbox(Component.literal(label));
+
+                checkbox.onChanged(b -> {
+                   if(!b) return;
+
+                   for(Map.Entry<Path, CheckboxComponent> itr : files.entrySet()) {
+                        if(!itr.getKey().equals(item)) {
+                            itr.getValue().checked(false);
+                        }
+                   }
+                });
+
                 container.child(checkbox);
                 files.put(item, checkbox);
             }
