@@ -4,6 +4,7 @@ import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.CheckboxComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.container.CollapsibleContainer;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -22,13 +23,11 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
     private final ItemSaver itemSaver;
+    private final Map<Path, ItemStack> itemStackMap = new HashMap<>();
     private final Map<Path, CheckboxComponent> selectedItems = new HashMap<>();
     private boolean multiselectEnabled = false;
 
@@ -62,7 +61,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
         giveButton = Components.button(Component.literal("Give"), button -> {
             for(Map.Entry<Path, CheckboxComponent> itr : selectedItems.entrySet()) {
-                ItemStack item = itemSaver.readItem(itr.getKey());
+                ItemStack item = itemStackMap.get(itr.getKey());
 
                 if (item == null) {
                     Minecraft.getInstance().player.displayClientMessage(Component.literal("An error occured while giving you the item, check the logs for more information."), false);
@@ -154,6 +153,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 }
 
                 CheckboxComponent checkbox = Components.checkbox(Component.literal(label));
+                checkbox.margins(Insets.right(5));
 
                 checkbox.onChanged(b -> {
                    if(!b) {
@@ -177,7 +177,20 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                    }
                 });
 
-                container.child(checkbox);
+                FlowLayout horizontalFlow = Containers.horizontalFlow(Sizing.content(), Sizing.content());
+                horizontalFlow.child(checkbox);
+
+                // todo: save this and use it when giving instead of reading it again
+                ItemStack itemStack = itemSaver.readItem(item);
+
+                itemStackMap.put(item, itemStack);
+
+                ItemComponent itemComponent = Components.item(itemStack);
+                itemComponent.setTooltipFromStack(true);
+                itemComponent.showOverlay(true);
+                horizontalFlow.child(itemComponent);
+
+                container.child(horizontalFlow);
             }
         }
     }
