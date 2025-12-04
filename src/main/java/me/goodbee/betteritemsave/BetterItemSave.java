@@ -52,9 +52,9 @@ public class BetterItemSave implements ClientModInitializer {
 
 						try {
 							itemSaver.saveItem(location, context.getSource().getPlayer().getMainHandItem());
-							context.getSource().sendFeedback(Component.literal("Successfully saved to " + location));
+							context.getSource().sendFeedback(Component.translatable("text.command.better-item-save.saveItem.success", location));
 						} catch (RuntimeException e) {
-							context.getSource().sendError(Component.literal("An error occurred while saving the item. Check the logs for more information."));
+							context.getSource().sendError(Component.translatable("text.command.better-item-save.saveItem.error"));
 							LOGGER.error("An error occured while trying to save an item", e);
 						}
 

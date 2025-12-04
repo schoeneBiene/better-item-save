@@ -61,7 +61,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         FlowLayout buttonRow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
         buttonRow.margins(Insets.bottom(5));
 
-        giveButton = Components.button(Component.literal("Give"), button -> {
+        giveButton = Components.button(Component.translatable("text.menu.better-item-save.giveButton"), button -> {
             for(Map.Entry<Path, CheckboxComponent> itr : selectedItems.entrySet()) {
                 ItemStack item = itemStackMap.get(itr.getKey());
 
@@ -69,7 +69,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                     item = itemSaver.readItem(itr.getKey());
 
                     if(item == null) {
-                        Minecraft.getInstance().player.displayClientMessage(Component.literal("An error occured while giving you the item, check the logs for more information."), false);
+                        Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.menu.better-item-save.itemGiveError"), false);
                         return;
                     }
                 }
@@ -91,7 +91,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 }
 
                 if(!found) {
-                    player.displayClientMessage(Component.literal("The item wasn't given, as your hotbar is full!"), false);
+                    player.displayClientMessage(Component.translatable("text.menu.better-item-save.hotbarFullError"), false);
                 }
             }
         });
@@ -99,13 +99,13 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         giveButton.active(false);
         buttonRow.child(giveButton);
 
-        ButtonComponent refreshButton = Components.button(Component.literal("Refresh"), button -> {
+        ButtonComponent refreshButton = Components.button(Component.translatable("text.menu.better-item-save.refreshButton"), button -> {
             Minecraft.getInstance().setScreen(new ItemListScreen(itemSaver));
         });
         refreshButton.margins(Insets.right(5));
         buttonRow.child(refreshButton);
 
-        CheckboxComponent multiselectCheckbox = Components.checkbox(Component.literal("Multiselect"));
+        CheckboxComponent multiselectCheckbox = Components.checkbox(Component.translatable("text.menu.better-item-save.multiselectLabel"));
         multiselectCheckbox.onChanged(b -> multiselectEnabled = b);
         multiselectCheckbox.margins(Insets.top(1));
         buttonRow.child(multiselectCheckbox);
@@ -119,7 +119,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
             ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(BetterItemSave.CONFIG.verticalMenuSize()), scrollChild);
             container.child(scrollContainer);
         } catch (IOException e) {
-            rootComponent.child(Components.label(Component.literal("An error occured! Check the logs for more information.")));
+            rootComponent.child(Components.label(Component.translatable("text.menu.better-item-save.error")));
 
             BetterItemSave.LOGGER.error("Could not get files!", e);
         }
@@ -197,7 +197,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                     horizontalFlow.child(itemComponent);
                 } else if(BetterItemSave.CONFIG.showItemPreview() == ConfigModel.ShowItemPreviewOptions.ON_HOVER) {
                     ItemStack itemStack = new ItemStack(Items.BREWER_POTTERY_SHERD, 1);
-                    itemStack.set(DataComponents.CUSTOM_NAME, Component.literal("Loading..."));
+                    itemStack.set(DataComponents.CUSTOM_NAME, Component.translatable("text.menu.better-item-save.loading"));
 
                     ItemComponent itemComponent = Components.item(itemStack);
                     itemComponent.setTooltipFromStack(true);

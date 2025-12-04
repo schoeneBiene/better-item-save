@@ -1,4 +1,13 @@
 {
+  "text.menu.better-item-save.giveButton": "Give",
+  "text.menu.better-item-save.refreshButton": "Refresh",
+  "text.menu.better-item-save.multiselectLabel": "Multiselect",
+  "text.menu.better-item-save.itemGiveError": "An error occured while giving you the item, check the logs for more information.",
+  "text.menu.better-item-save.hotbarFullError": "The item wasn't given, as your hotbar is full!",
+  "text.menu.better-item-save.error": "An error occured! Check the logs for more information.",
+  "text.menu.better-item-save.loading": "Loading...",
+  "text.command.better-item-save.saveItem.success": "Successfully saved to %1$s",
+  "text.command.better-item-save.saveItem.error": "An error occurred while saving the item. Check the logs for more information.",
   "text.config.better-item-save.option.horizontalMenuSize": "Horizontal Menu Size",
   "text.config.better-item-save.option.horizontalMenuSize.tooltip": "Sets the horizontal menu size in %",
   "text.config.better-item-save.option.verticalMenuSize": "Vertical Menu Size",
