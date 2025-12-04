@@ -134,14 +134,19 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         });
 
         for(Path item : sorted) {
+            String label = item.getFileName().toString();
             if(Files.isDirectory(item)) {
-                CollapsibleContainer collapsibleContainer = Containers.collapsible(Sizing.content(), Sizing.content(), Component.literal(item.getFileName().toString()), false);
+                CollapsibleContainer collapsibleContainer = Containers.collapsible(Sizing.content(), Sizing.content(), Component.literal(label), false);
 
                 addFiles(item, collapsibleContainer);
 
                 container.child(collapsibleContainer);
             } else {
-                CheckboxComponent checkbox = Components.checkbox(Component.literal(item.getFileName().toString()));
+                if(label.endsWith(".nbt")) {
+                    label = label.substring(0, label.length() - 4);
+                }
+
+                CheckboxComponent checkbox = Components.checkbox(Component.literal(label));
                 container.child(checkbox);
                 files.put(item, checkbox);
             }
