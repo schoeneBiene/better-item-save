@@ -39,6 +39,8 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         return OwoUIAdapter.create(this, Containers::verticalFlow);
     }
 
+    ButtonComponent giveButton;
+
     @Override
     protected void build(FlowLayout rootComponent) {
         rootComponent
@@ -56,7 +58,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         FlowLayout buttonRow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
         buttonRow.margins(Insets.bottom(5));
 
-        ButtonComponent giveButton = Components.button(Component.literal("Give"), button -> {
+        giveButton = Components.button(Component.literal("Give"), button -> {
             for(Map.Entry<Path, CheckboxComponent> itr : files.entrySet()) {
                 BetterItemSave.LOGGER.debug(itr.getKey().toString());
                 BetterItemSave.LOGGER.debug(itr.getValue().toString());
@@ -91,6 +93,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
             }
         });
         giveButton.margins(Insets.right(5));
+        giveButton.active(false);
         buttonRow.child(giveButton);
 
         ButtonComponent refreshButton = Components.button(Component.literal("Refresh"), button -> {
@@ -149,12 +152,17 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 CheckboxComponent checkbox = Components.checkbox(Component.literal(label));
 
                 checkbox.onChanged(b -> {
-                   if(!b) return;
-
-                   for(Map.Entry<Path, CheckboxComponent> itr : files.entrySet()) {
-                        if(!itr.getKey().equals(item)) {
-                            itr.getValue().checked(false);
-                        }
+                   if(!b) {
+                       if(giveButton != null) {
+                           giveButton.active(false);
+                       }
+                   } else {
+                       for (Map.Entry<Path, CheckboxComponent> itr : files.entrySet()) {
+                           if (!itr.getKey().equals(item)) {
+                               itr.getValue().checked(false);
+                           }
+                       }
+                       giveButton.active(true);
                    }
                 });
 
