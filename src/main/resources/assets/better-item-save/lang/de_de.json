@@ -9,6 +9,7 @@
   "text.menu.better-item-save.loading": "Laden...",
   "text.command.better-item-save.saveItem.success": "Erfolgreich nach %1$s gespeichert",
   "text.command.better-item-save.saveItem.error": "Ein Fehler ist beim Speichern des Gegenstandes aufgetreten. Überprüfe für mehr Informationen das Protokoll.",
+  "text.config.better-item-save.title": "Better Item Save Konfiguration",
   "text.config.better-item-save.option.horizontalMenuSize": "Horizontale Menügröße",
   "text.config.better-item-save.option.horizontalMenuSize.tooltip": "Setzt die horizontale Menügröße in %",
   "text.config.better-item-save.option.verticalMenuSize": "Vertikale Menügröße",
