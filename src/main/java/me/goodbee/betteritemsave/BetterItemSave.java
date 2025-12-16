@@ -1,11 +1,14 @@
 package me.goodbee.betteritemsave;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import me.goodbee.betteritemsave.files.ItemFileList;
 import me.goodbee.betteritemsave.ui.Config;
 import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
@@ -26,6 +29,7 @@ public class BetterItemSave implements ClientModInitializer {
 	public static final Config CONFIG = Config.createAndLoad();
 
 	public static ItemSaver itemSaver;
+	public static ItemFileList itemFileList;
 	@Override
 	public void onInitializeClient() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -39,6 +43,7 @@ public class BetterItemSave implements ClientModInitializer {
 		}
 
 		itemSaver = new ItemSaver(BASE_PATH);
+		itemFileList = new ItemFileList(itemSaver, BASE_PATH);
 
 		ClientCommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess) -> {
 			dispatcher.register(ClientCommandManager.literal("save-item-in-hand")
@@ -61,5 +66,15 @@ public class BetterItemSave implements ClientModInitializer {
 						return 1;
 					})));
 		}));
+
+		ClientPlayConnectionEvents.JOIN.register((packetListener, packetSender, minecraftClient) -> {
+			new Thread(() -> {
+				try {
+					itemFileList.recheckFolder();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}).start();
+		});
 	}
 }

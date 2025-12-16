@@ -1,6 +1,7 @@
 {
   "text.menu.better-item-save.giveButton": "Give",
   "text.menu.better-item-save.refreshButton": "Refresh",
+  "text.menu.better-item-save.refreshButtonRefreshing": "Refreshing...",
   "text.menu.better-item-save.multiselectLabel": "Multiselect",
   "text.menu.better-item-save.itemGiveError": "An error occured while giving you the item, check the logs for more information.",
   "text.menu.better-item-save.hotbarFullError": "The item wasn't given, as your hotbar is full!",
@@ -13,7 +14,7 @@
   "text.config.better-item-save.option.verticalMenuSize": "Vertical Menu Size",
   "text.config.better-item-save.option.verticalMenuSize.tooltip": "Sets the vertical menu size in %",
   "text.config.better-item-save.option.showItemPreview": "Show Item Preview",
-  "text.config.better-item-save.option.showItemPreview.tooltip": "Whether or not to show an item preview, this can cause lag when opening the menu if you have many or big items saved.",
+  "text.config.better-item-save.option.showItemPreview.tooltip": "Whether or not to show an item preview",
   "text.config.better-item-save.option.showItemPreview.value.enabled": "Enabled",
   "text.config.better-item-save.option.showItemPreview.value.disabled": "Disabled",
   "text.config.better-item-save.option.showItemPreview.value.on_hover": "On Hover"

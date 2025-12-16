@@ -1,6 +1,7 @@
 package me.goodbee.betteritemsave.ui;
 
 import io.wispforest.owo.config.annotation.Config;
+import io.wispforest.owo.config.annotation.ExcludeFromScreen;
 import io.wispforest.owo.config.annotation.Modmenu;
 import io.wispforest.owo.config.annotation.RangeConstraint;
 import me.goodbee.betteritemsave.BetterItemSave;
@@ -17,7 +18,6 @@ public class ConfigModel {
 
     public enum ShowItemPreviewOptions {
         ENABLED,
-        ON_HOVER,
         DISABLED
     }
 }

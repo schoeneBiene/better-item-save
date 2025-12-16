@@ -12,13 +12,13 @@ import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import me.goodbee.betteritemsave.BetterItemSave;
 import me.goodbee.betteritemsave.ItemSaver;
+import me.goodbee.betteritemsave.files.ItemFile;
+import me.goodbee.betteritemsave.files.ItemFileList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -29,12 +29,13 @@ import java.util.*;
 
 public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
     private final ItemSaver itemSaver;
-    private final Map<Path, ItemStack> itemStackMap = new HashMap<>();
+    private final ItemFileList itemFileList;
     private final Map<Path, CheckboxComponent> selectedItems = new HashMap<>();
     private boolean multiselectEnabled = false;
 
-    public ItemListScreen(ItemSaver itemSaver) {
+    public ItemListScreen(ItemSaver itemSaver, ItemFileList itemFileList) {
         this.itemSaver = itemSaver;
+        this.itemFileList = itemFileList;
     }
 
     @Override
@@ -42,7 +43,44 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         return OwoUIAdapter.create(this, Containers::verticalFlow);
     }
 
+    ButtonComponent refreshButton;
+    protected void setIsRefreshing(boolean newValue) {
+        if(refreshButton == null) return;
+
+        if(newValue) {
+            refreshButton.active(false);
+            refreshButton.setMessage(Component.translatable("text.menu.better-item-save.refreshButtonRefreshing"));
+        } else {
+            refreshButton.active(true);
+            refreshButton.setMessage(Component.translatable("text.menu.better-item-save.refreshButton"));
+        }
+    }
+
     ButtonComponent giveButton;
+    FlowLayout scrollChild;
+
+    protected void updateItems() {
+        setIsRefreshing(true);
+        new Thread(() -> {
+            try {
+                itemFileList.recheckFolder();
+
+                Minecraft.getInstance().execute(() -> {
+                    scrollChild.clearChildren();
+                    try {
+                        addFiles(BetterItemSave.BASE_PATH, scrollChild);
+                        setIsRefreshing(false);
+                    } catch (IOException e) {
+                        scrollChild.child(Components.label(Component.translatable("text.menu.better-item-save.error")));
+
+                        BetterItemSave.LOGGER.error("Could not get files!", e);
+                    }
+                });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
 
     @Override
     protected void build(FlowLayout rootComponent) {
@@ -63,16 +101,14 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
         giveButton = Components.button(Component.translatable("text.menu.better-item-save.giveButton"), button -> {
             for(Map.Entry<Path, CheckboxComponent> itr : selectedItems.entrySet()) {
-                ItemStack item = itemStackMap.get(itr.getKey());
+                ItemFile itemFile = itemFileList.getItemFileMap().get(itr.getKey());
 
-                if (item == null) {
-                    item = itemSaver.readItem(itr.getKey());
-
-                    if(item == null) {
-                        Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.menu.better-item-save.itemGiveError"), false);
-                        return;
-                    }
+                if (itemFile == null || itemFile.itemStack == null) {
+                    Minecraft.getInstance().player.displayClientMessage(Component.translatable("text.menu.better-item-save.itemGiveError"), false);
+                    return;
                 }
+
+                ItemStack item = itemFile.itemStack;
 
                 LocalPlayer player = Minecraft.getInstance().player;
 
@@ -99,9 +135,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         giveButton.active(false);
         buttonRow.child(giveButton);
 
-        ButtonComponent refreshButton = Components.button(Component.translatable("text.menu.better-item-save.refreshButton"), button -> {
-            Minecraft.getInstance().setScreen(new ItemListScreen(itemSaver));
-        });
+        refreshButton = Components.button(Component.translatable("text.menu.better-item-save.refreshButton"), button -> updateItems());
         refreshButton.margins(Insets.right(5));
         buttonRow.child(refreshButton);
 
@@ -112,20 +146,21 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
         container.child(buttonRow);
 
-        FlowLayout scrollChild = Containers.verticalFlow(Sizing.fill(), Sizing.content());
+        scrollChild = Containers.verticalFlow(Sizing.fill(), Sizing.content());
         try {
-            addFiles(itemSaver.basePath, scrollChild);
-
-            ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(BetterItemSave.CONFIG.verticalMenuSize()), scrollChild);
-            container.child(scrollContainer);
+            addFiles(BetterItemSave.BASE_PATH, scrollChild);
         } catch (IOException e) {
             rootComponent.child(Components.label(Component.translatable("text.menu.better-item-save.error")));
 
             BetterItemSave.LOGGER.error("Could not get files!", e);
         }
 
+        ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(BetterItemSave.CONFIG.verticalMenuSize()), scrollChild);
+        container.child(scrollContainer);
 
         rootComponent.child(container);
+
+        updateItems();
     }
 
     protected void addFiles(Path currentPath, FlowLayout container) throws IOException {
@@ -187,30 +222,15 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 horizontalFlow.child(checkbox);
 
                 if(BetterItemSave.CONFIG.showItemPreview() == ConfigModel.ShowItemPreviewOptions.ENABLED) {
-                    ItemStack itemStack = itemSaver.readItem(item);
+                    if(itemFileList.getItemFileMap().get(item) == null) {
+                        continue;
+                    }
 
-                    itemStackMap.put(item, itemStack);
-
-                    ItemComponent itemComponent = Components.item(itemStack);
-                    itemComponent.setTooltipFromStack(true);
-                    itemComponent.showOverlay(true);
-                    horizontalFlow.child(itemComponent);
-                } else if(BetterItemSave.CONFIG.showItemPreview() == ConfigModel.ShowItemPreviewOptions.ON_HOVER) {
-                    ItemStack itemStack = new ItemStack(Items.BREWER_POTTERY_SHERD, 1);
-                    itemStack.set(DataComponents.CUSTOM_NAME, Component.translatable("text.menu.better-item-save.loading"));
-
-                    final boolean[] hasDone = {false};
+                    ItemStack itemStack = itemFileList.getItemFileMap().get(item).itemStack;
 
                     ItemComponent itemComponent = Components.item(itemStack);
                     itemComponent.setTooltipFromStack(true);
                     itemComponent.showOverlay(true);
-                    itemComponent.mouseEnter().subscribe(() -> {
-                        if(!hasDone[0]) {
-                            ItemStack realItemStack = itemSaver.readItem(item);
-                            itemComponent.stack(realItemStack);
-                            hasDone[0] = true;
-                        }
-                    });
                     horizontalFlow.child(itemComponent);
                 }
 

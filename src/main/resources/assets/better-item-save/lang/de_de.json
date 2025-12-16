@@ -1,6 +1,7 @@
 {
   "text.menu.better-item-save.giveButton": "Geben",
   "text.menu.better-item-save.refreshButton": "Neu laden",
+  "text.menu.better-item-save.refreshButtonRefreshing": "Lade neu...",
   "text.menu.better-item-save.multiselectLabel": "Mehrfachauswahl",
   "text.menu.better-item-save.itemGiveError": "Ein Fehler ist beim Geben vom Gegenstand aufgetreten, überprüfe für mehr Information das Protokoll.",
   "text.menu.better-item-save.hotbarFullError": "Der Gegenstand wurde nicht gegeben, da die Hotbar voll ist.",
@@ -13,7 +14,7 @@
   "text.config.better-item-save.option.verticalMenuSize": "Vertikale Menügröße",
   "text.config.better-item-save.option.verticalMenuSize.tooltip": "Setzt die vertikale Menügröße in %",
   "text.config.better-item-save.option.showItemPreview": "Gegenstandvorschau anzeigen",
-  "text.config.better-item-save.option.showItemPreview.tooltip": "Ob die Gegenstandsvorschau angezeigt werden soll, dieses kann Verzögerungen verursachen, wenn viele or große Gegenstände gespeichert sind.",
+  "text.config.better-item-save.option.showItemPreview.tooltip": "Ob die Gegenstandsvorschau angezeigt werden soll",
   "text.config.better-item-save.option.showItemPreview.value.enabled": "Eingeschaltet",
   "text.config.better-item-save.option.showItemPreview.value.disabled": "Ausgeschaltet",
   "text.config.better-item-save.option.showItemPreview.value.on_hover": "Beim Hovern"

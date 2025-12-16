@@ -21,7 +21,7 @@ public class AbstractContainerScreenMixin extends Screen {
     protected void init(CallbackInfo ci) {
         if(minecraft.player.getAbilities().instabuild) {
             this.addRenderableWidget(Button.builder(Component.literal("Better Item Saver"), button -> {
-                this.minecraft.setScreen(new ItemListScreen(BetterItemSave.itemSaver));
+                this.minecraft.setScreen(new ItemListScreen(BetterItemSave.itemSaver, BetterItemSave.itemFileList));
             }).bounds(10, 10, 120, 20).build());
         }
     }
