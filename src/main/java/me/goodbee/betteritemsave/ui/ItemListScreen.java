@@ -218,6 +218,10 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                    }
                 });
 
+                if(selectedItems.containsKey(item)) {
+                    checkbox.checked(true);
+                }
+
                 FlowLayout horizontalFlow = Containers.horizontalFlow(Sizing.content(), Sizing.content());
                 horizontalFlow.child(checkbox);
 
