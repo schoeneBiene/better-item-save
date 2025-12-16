@@ -31,6 +31,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
     private final ItemSaver itemSaver;
     private final ItemFileList itemFileList;
     private final Map<Path, CheckboxComponent> selectedItems = new HashMap<>();
+    private final List<Path> expandedCollabsibles = new ArrayList<>();
     private boolean multiselectEnabled = false;
 
     public ItemListScreen(ItemSaver itemSaver, ItemFileList itemFileList) {
@@ -183,7 +184,15 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         for(Path item : sorted) {
             String label = item.getFileName().toString();
             if(Files.isDirectory(item)) {
-                CollapsibleContainer collapsibleContainer = Containers.collapsible(Sizing.content(), Sizing.content(), Component.literal(label), false);
+                CollapsibleContainer collapsibleContainer = Containers.collapsible(Sizing.content(), Sizing.content(), Component.literal(label), expandedCollabsibles.contains(item));
+
+                collapsibleContainer.onToggled().subscribe(b -> {
+                    if(b) {
+                        expandedCollabsibles.add(item);
+                    } else {
+                        expandedCollabsibles.remove(item);
+                    }
+                });
 
                 addFiles(item, collapsibleContainer);
 
