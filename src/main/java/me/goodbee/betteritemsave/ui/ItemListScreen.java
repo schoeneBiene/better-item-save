@@ -195,6 +195,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 });
 
                 addFiles(item, collapsibleContainer);
+                collapsibleContainer.margins(Insets.bottom(2));
 
                 container.child(collapsibleContainer);
             } else {
