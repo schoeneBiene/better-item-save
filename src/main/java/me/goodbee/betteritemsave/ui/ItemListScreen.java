@@ -3,10 +3,10 @@ package me.goodbee.betteritemsave.ui;
 import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.CheckboxComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.container.CollapsibleContainer;
-import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
@@ -41,7 +41,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
     @Override
     protected @NotNull OwoUIAdapter<FlowLayout> createAdapter() {
-        return OwoUIAdapter.create(this, Containers::verticalFlow);
+        return OwoUIAdapter.create(this, UIContainers::verticalFlow);
     }
 
     ButtonComponent refreshButton;
@@ -72,7 +72,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                         addFiles(BetterItemSave.BASE_PATH, scrollChild);
                         setIsRefreshing(false);
                     } catch (IOException e) {
-                        scrollChild.child(Components.label(Component.translatable("text.menu.better-item-save.error")));
+                        scrollChild.child(UIComponents.label(Component.translatable("text.menu.better-item-save.error")));
 
                         BetterItemSave.LOGGER.error("Could not get files!", e);
                     }
@@ -90,17 +90,17 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 .horizontalAlignment(HorizontalAlignment.CENTER)
                 .verticalAlignment(VerticalAlignment.CENTER);
 
-        FlowLayout container = Containers.verticalFlow(Sizing.fill(BetterItemSave.CONFIG.horizontalMenuSize()), Sizing.content());
+        FlowLayout container = UIContainers.verticalFlow(Sizing.fill(BetterItemSave.CONFIG.horizontalMenuSize()), Sizing.content());
 
         container
                 .padding(Insets.of(10))
                 .surface(Surface.DARK_PANEL)
                 .horizontalAlignment(HorizontalAlignment.LEFT);
 
-        FlowLayout buttonRow = Containers.horizontalFlow(Sizing.fill(), Sizing.content());
+        FlowLayout buttonRow = UIContainers.horizontalFlow(Sizing.fill(), Sizing.content());
         buttonRow.margins(Insets.bottom(5));
 
-        giveButton = Components.button(Component.translatable("text.menu.better-item-save.giveButton"), button -> {
+        giveButton = UIComponents.button(Component.translatable("text.menu.better-item-save.giveButton"), button -> {
             for(Map.Entry<Path, CheckboxComponent> itr : selectedItems.entrySet()) {
                 ItemFile itemFile = itemFileList.getItemFileMap().get(itr.getKey());
 
@@ -136,27 +136,27 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         giveButton.active(false);
         buttonRow.child(giveButton);
 
-        refreshButton = Components.button(Component.translatable("text.menu.better-item-save.refreshButton"), button -> updateItems());
+        refreshButton = UIComponents.button(Component.translatable("text.menu.better-item-save.refreshButton"), button -> updateItems());
         refreshButton.margins(Insets.right(5));
         buttonRow.child(refreshButton);
 
-        CheckboxComponent multiselectCheckbox = Components.checkbox(Component.translatable("text.menu.better-item-save.multiselectLabel"));
+        CheckboxComponent multiselectCheckbox = UIComponents.checkbox(Component.translatable("text.menu.better-item-save.multiselectLabel"));
         multiselectCheckbox.onChanged(b -> multiselectEnabled = b);
         multiselectCheckbox.margins(Insets.top(1));
         buttonRow.child(multiselectCheckbox);
 
         container.child(buttonRow);
 
-        scrollChild = Containers.verticalFlow(Sizing.fill(), Sizing.content());
+        scrollChild = UIContainers.verticalFlow(Sizing.fill(), Sizing.content());
         try {
             addFiles(BetterItemSave.BASE_PATH, scrollChild);
         } catch (IOException e) {
-            rootComponent.child(Components.label(Component.translatable("text.menu.better-item-save.error")));
+            rootComponent.child(UIComponents.label(Component.translatable("text.menu.better-item-save.error")));
 
             BetterItemSave.LOGGER.error("Could not get files!", e);
         }
 
-        ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.content(), Sizing.fill(BetterItemSave.CONFIG.verticalMenuSize()), scrollChild);
+        ScrollContainer<FlowLayout> scrollContainer = UIContainers.verticalScroll(Sizing.content(), Sizing.fill(BetterItemSave.CONFIG.verticalMenuSize()), scrollChild);
         container.child(scrollContainer);
 
         rootComponent.child(container);
@@ -184,7 +184,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         for(Path item : sorted) {
             String label = item.getFileName().toString();
             if(Files.isDirectory(item)) {
-                CollapsibleContainer collapsibleContainer = Containers.collapsible(Sizing.content(), Sizing.content(), Component.literal(label), expandedCollabsibles.contains(item));
+                CollapsibleContainer collapsibleContainer = UIContainers.collapsible(Sizing.content(), Sizing.content(), Component.literal(label), expandedCollabsibles.contains(item));
 
                 collapsibleContainer.onToggled().subscribe(b -> {
                     if(b) {
@@ -195,7 +195,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                 });
 
                 addFiles(item, collapsibleContainer);
-                collapsibleContainer.margins(Insets.bottom(2));
+                collapsibleContainer.margins(Insets.bottom(5));
 
                 container.child(collapsibleContainer);
             } else {
@@ -203,7 +203,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                     label = label.substring(0, label.length() - 4);
                 }
 
-                CheckboxComponent checkbox = Components.checkbox(Component.literal(label));
+                CheckboxComponent checkbox = UIComponents.checkbox(Component.literal(label));
                 checkbox.margins(Insets.right(5));
 
                 checkbox.onChanged(b -> {
@@ -232,7 +232,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
                     checkbox.checked(true);
                 }
 
-                FlowLayout horizontalFlow = Containers.horizontalFlow(Sizing.content(), Sizing.content());
+                FlowLayout horizontalFlow = UIContainers.horizontalFlow(Sizing.content(), Sizing.content());
                 horizontalFlow.child(checkbox);
 
                 if(BetterItemSave.CONFIG.showItemPreview() == ConfigModel.ShowItemPreviewOptions.ENABLED) {
@@ -242,7 +242,7 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
 
                     ItemStack itemStack = itemFileList.getItemFileMap().get(item).itemStack;
 
-                    ItemComponent itemComponent = Components.item(itemStack);
+                    ItemComponent itemComponent = UIComponents.item(itemStack);
                     itemComponent.setTooltipFromStack(true);
                     itemComponent.showOverlay(true);
                     horizontalFlow.child(itemComponent);

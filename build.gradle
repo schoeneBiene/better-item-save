@@ -40,8 +40,13 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// owo ui
-	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-	annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
+	modImplementation("io.wispforest:owo-lib:${project.owo_version}") {
+		exclude group: "com.github.kdl-org", module: "kdl4j"
+	}
+
+	annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}") {
+		exclude group: "com.github.kdl-org", module: "kdl4j"
+	}
 }
 
 processResources {

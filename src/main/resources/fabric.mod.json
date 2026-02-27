@@ -23,11 +23,11 @@
 		"better-item-save.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.18.1",
-		"minecraft": "~1.21.10",
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*",
-		"owo": "0.12.24+1.21.9"
+		"owo": "0.13.0+1.21.11"
 	},
 	"suggests": {}
 }
