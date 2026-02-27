@@ -10,6 +10,7 @@ import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Insets;
 import me.goodbee.betteritemsave.BetterItemSave;
 import me.goodbee.betteritemsave.ItemSaver;
 import me.goodbee.betteritemsave.files.ItemFile;
@@ -18,14 +19,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 
 public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
     private final ItemSaver itemSaver;
@@ -144,6 +149,10 @@ public class ItemListScreen extends BaseOwoScreen<FlowLayout> {
         multiselectCheckbox.onChanged(b -> multiselectEnabled = b);
         multiselectCheckbox.margins(Insets.top(1));
         buttonRow.child(multiselectCheckbox);
+
+        buttonRow.child(UIComponents.button(Component.translatable("text.menu.better-item-save.itemFolderButton"), button -> {
+            Util.getPlatform().openPath(this.itemSaver.basePath);
+        }));
 
         container.child(buttonRow);
 

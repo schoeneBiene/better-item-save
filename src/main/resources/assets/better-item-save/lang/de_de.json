@@ -18,5 +18,6 @@
   "text.config.better-item-save.option.showItemPreview.tooltip": "Ob die Gegenstandsvorschau angezeigt werden soll",
   "text.config.better-item-save.option.showItemPreview.value.enabled": "Eingeschaltet",
   "text.config.better-item-save.option.showItemPreview.value.disabled": "Ausgeschaltet",
-  "text.config.better-item-save.option.showItemPreview.value.on_hover": "Beim Hovern"
+  "text.config.better-item-save.option.showItemPreview.value.on_hover": "Beim Hovern",
+  "text.menu.better-item-save.itemFolderButton": "Gegenstandsordner öffnen"
 }
